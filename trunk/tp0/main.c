@@ -64,8 +64,6 @@ int main(int argc, char* argv[])
 				output=param;
 			}
 		}
-//		else
-//			showHelp = 1;
 
     	numArg++;
     }
