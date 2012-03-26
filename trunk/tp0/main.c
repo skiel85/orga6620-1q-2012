@@ -10,7 +10,9 @@ void PrintFileError(char* filename);
 int decodeProcess(const char* filein,const char* fileou);
 int encodeProcess(const char* input, const char* output, int lineLength);
 int procesar_mergesort(const char* filein,const char* fileou);
+int procesar_selectionsort(const char* filein,const char* fileou);
 char* mergesort(char* list);
+char* selectionsort(char* list);
 long filesize(FILE** fd);
 char* merge(char* left, char* right);
 
@@ -107,6 +109,7 @@ int main(int argc, char* argv[])
         }
         else if (action && ((strcmp(action, "--sel") == 0) || (strcmp(action, "-s") == 0))){
         	printf("Usando el selectionsort con input:'%s' y output:'%s'\n",input,output);
+		error = procesar_selectionsort(input,output);
         }
         else
         {
@@ -167,6 +170,37 @@ int procesar_mergesort(const char* filein,const char* fileou) {
 	return 0; /*Successfully finished*/
 }
 
+int procesar_selectionsort(const char* filein,const char* fileou) {
+    FILE *fdi, *fdo;
+    char* leido=0;
+
+    fdi=strcmp(filein,"stdin") ?fopen(filein,"rb"):stdin;
+	if (!fdi) return -1; /* Error while opening input file */
+    fdo=strcmp(fileou,"stdout")?fopen(fileou,"wt"):stdout;
+	if (!fdo) return -2; /* Error while opening output file */
+
+	long size=filesize(&fdi);
+
+	leido=malloc((size)*sizeof(char));
+
+	fgets(leido,size+1,fdi);
+
+	printf("texto leido: %s\n",leido);
+
+
+	leido=selectionsort(leido);
+
+	fputs(leido,fdo);
+	printf("\n");
+
+	free(leido);
+
+
+	fclose(fdi);
+	fclose(fdo);
+	return 0; /*Successfully finished*/
+}
+
 char* mergesort(char* list){
 
 	char* left;
@@ -193,6 +227,38 @@ char* mergesort(char* list){
 
 
 	return result;
+
+}
+
+char* selectionsort(char* list){
+
+	return list;
+/*
+	char* left;
+	char* right;
+	char* result=list;
+
+	long length=strlen(list);
+
+	if(length==1)
+		return result;
+
+
+	long middle=length/2;
+	left=malloc((middle)*sizeof(char));
+	strncpy(left,list,middle);
+
+	right=malloc((length-middle)*sizeof(char));
+	strncpy(right,list+middle,length-middle);
+
+	left=mergesort(left);
+	right=mergesort(right);
+
+	result=merge(left,right);
+
+
+	return result;
+*/
 
 }
 
