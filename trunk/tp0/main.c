@@ -9,6 +9,11 @@ void PrintParameterError(char* param);
 void PrintFileError(char* filename);
 int decodeProcess(const char* filein,const char* fileou);
 int encodeProcess(const char* input, const char* output, int lineLength);
+int procesar_mergesort(const char* filein,const char* fileou);
+char* mergesort(char* list);
+long filesize(FILE** fd);
+char* merge(char* left, char* right);
+
 
 int main(int argc, char* argv[])
 {
@@ -97,11 +102,10 @@ int main(int argc, char* argv[])
         	output = "stdout";
 
         if (!action || ((strcmp(action, "--merge") == 0) || (strcmp(action, "-m") == 0))){
-        	//error = encodeProcess(input,output, length);
         	printf("Usando el mergesort con input:'%s' y output:'%s'\n",input,output);
+        	error = procesar_mergesort(input,output);
         }
         else if (action && ((strcmp(action, "--sel") == 0) || (strcmp(action, "-s") == 0))){
-        	//error = decodeProcess(input,output);
         	printf("Usando el selectionsort con input:'%s' y output:'%s'\n",input,output);
         }
         else
@@ -123,44 +127,109 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-int encodeProcess(const char* filein,const char* fileou, int lineLength) {
-        FILE *fdi, *fdo;
-        int i=0, c;
+long filesize(FILE **fd){
+	fseek(*fd, 0, SEEK_END); // seek to end of file
+	long size = ftell(*fd); // get current file pointer
+	fseek(*fd, 0, SEEK_SET); // seek back to beginning of file
+	// proceed with allocating memory and reading the file
 
-        fdi=strcmp(filein,"stdin") ?fopen(filein,"rb"):stdin;
+	return size;
+}
+
+int procesar_mergesort(const char* filein,const char* fileou) {
+    FILE *fdi, *fdo;
+    char* leido=0;
+
+    fdi=strcmp(filein,"stdin") ?fopen(filein,"rb"):stdin;
 	if (!fdi) return -1; /* Error while opening input file */
-        fdo=strcmp(fileou,"stdout")?fopen(fileou,"wt"):stdout;
+    fdo=strcmp(fileou,"stdout")?fopen(fileou,"wt"):stdout;
 	if (!fdo) return -2; /* Error while opening output file */
 
-        while ((c=fgetc(fdi))!=EOF) {
-          fprintf(fdo,"%02x",c);
-          if (lineLength && !((++i)%lineLength))
-                fputc('\n',fdo);
-         }
-        if (!lineLength || i%lineLength)
-                fputc('\n',fdo);
+	long size=filesize(&fdi);
+
+	leido=malloc((size)*sizeof(char));
+
+	fgets(leido,size+1,fdi);
+
+	printf("texto leido: %s\n",leido);
+
+
+	leido=mergesort(leido);
+
+	fputs(leido,fdo);
+	printf("\n");
+
+	free(leido);
+
+
 	fclose(fdi);
 	fclose(fdo);
 	return 0; /*Successfully finished*/
 }
 
-int decodeProcess(const char* filein,const char* fileou) {
-	FILE *fdi, *fdo;
-	int  c;
+char* mergesort(char* list){
 
-	fdi=strcmp(filein,"stdin") ?fopen(filein,"rb"):stdin;
-	if (!fdi) return -1; /* Error while opening input file */
-	fdo=strcmp(fileou,"stdout")?fopen(fileou,"wt"):stdout;
-	if (!fdo) return -2; /* Error while opening output file */
+	char* left;
+	char* right;
+	char* result=list;
 
-	while (fscanf(fdi,"%02x", &c)!=EOF) {
-		fputc(c,fdo);
+	long length=strlen(list);
+
+	if(length==1)
+		return result;
+
+
+	long middle=length/2;
+	left=malloc((middle)*sizeof(char));
+	strncpy(left,list,middle);
+
+	right=malloc((length-middle)*sizeof(char));
+	strncpy(right,list+middle,length-middle);
+
+	left=mergesort(left);
+	right=mergesort(right);
+
+	result=merge(left,right);
+
+
+	return result;
+
+}
+
+char* merge(char* left, char* right){
+
+	long length_left=strlen(left);
+	long length_right=strlen(right);
+
+	char* result=malloc((length_left+length_right)*sizeof(char));
+
+	long i=0;
+	long j=0;
+	long c=0;
+
+	while(i<length_left || j<length_right){
+		if (i<length_left && j<length_right){
+			if (left[i]<=right[j]){
+				result[c]=left[i];
+				i++;
+			} else {
+				result[c]=right[j];
+				j++;
+			}
+
+		} else if(i<length_left){
+			result[c]=left[i];
+			i++;
+		} else if(j<length_right) {
+			result[c]=right[j];
+			j++;
+		}
+
+		c++;
 	}
 
-	fclose(fdi);
-	fclose(fdo);
+	return result;
 
-	return 0;
 }
 
 void PrintTooManyParamError()
