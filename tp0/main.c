@@ -15,6 +15,7 @@ char* mergesort(char* list);
 char* selectionsort(char* list);
 long filesize(FILE** fd);
 char* merge(char* left, char* right);
+void swap(char* array, int index1, int index2);
 
 
 int main(int argc, char* argv[])
@@ -230,37 +231,36 @@ char* mergesort(char* list){
 
 }
 
-char* selectionsort(char* list){
+char* selectionsort(char* list) {
+
+	int i, j;
+	int minPos;
+
+	int length=strlen(list);
+	 
+	for (i = 0; i < length; i++) {
+	    minPos = i;
+
+	    for (j = i+1; j < length; j++) {
+		if (list[j] < list[minPos]) {
+		    minPos = j;
+		}
+	    }
+	 
+	    if ( minPos != i ) {
+		swap(list, i, minPos);
+	    }
+	}
 
 	return list;
-/*
-	char* left;
-	char* right;
-	char* result=list;
-
-	long length=strlen(list);
-
-	if(length==1)
-		return result;
-
-
-	long middle=length/2;
-	left=malloc((middle)*sizeof(char));
-	strncpy(left,list,middle);
-
-	right=malloc((length-middle)*sizeof(char));
-	strncpy(right,list+middle,length-middle);
-
-	left=mergesort(left);
-	right=mergesort(right);
-
-	result=merge(left,right);
-
-
-	return result;
-*/
-
 }
+
+void swap(char* array, int index1, int index2) {
+	char aux = array[index1];
+	array[index1] = array[index2];
+	array[index2] = aux;
+}
+
 
 char* merge(char* left, char* right){
 
