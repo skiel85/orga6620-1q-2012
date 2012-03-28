@@ -9,8 +9,8 @@ void PrintParameterError(char* param);
 void PrintFileError(char* filename);
 int decodeProcess(const char* filein,const char* fileou);
 int encodeProcess(const char* input, const char* output, int lineLength);
-int procesar_mergesort(const char* filein,const char* fileou);
-int procesar_selectionsort(const char* filein,const char* fileou);
+int procesar_ordenamiento(const char* filein,const char* fileou, char* action);
+//int procesar_selectionsort(const char* filein,const char* fileou);
 char* mergesort(char* list);
 char* selectionsort(char* list);
 long filesize(FILE** fd);
@@ -104,19 +104,8 @@ int main(int argc, char* argv[])
         if (!output)
         	output = "stdout";
 
-        if (!action || ((strcmp(action, "--merge") == 0) || (strcmp(action, "-m") == 0))){
-        	printf("Usando el mergesort con input:'%s' y output:'%s'\n",input,output);
-        	error = procesar_mergesort(input,output);
-        }
-        else if (action && ((strcmp(action, "--sel") == 0) || (strcmp(action, "-s") == 0))){
-        	printf("Usando el selectionsort con input:'%s' y output:'%s'\n",input,output);
-		error = procesar_selectionsort(input,output);
-        }
-        else
-        {
-            fprintf(stderr, "Unknown action\n");
-            return 1;
-        }
+        error=procesar_ordenamiento(input, output, action);
+
         if (error==-1){
         	PrintFileError(input);
         } else {
@@ -140,7 +129,7 @@ long filesize(FILE **fd){
 	return size;
 }
 
-int procesar_mergesort(const char* filein,const char* fileou) {
+int procesar_ordenamiento(const char* filein,const char* fileou, char* action) {
     FILE *fdi, *fdo;
     char* leido=0;
 
@@ -155,13 +144,26 @@ int procesar_mergesort(const char* filein,const char* fileou) {
 
 	fgets(leido,size+1,fdi);
 
-	printf("texto leido: %s\n",leido);
+	if (!action || ((strcmp(action, "--merge") == 0) || (strcmp(action, "-m") == 0))){
+		//printf("Invocando el metodo mergesort con input '%s' y output '%s'\n",filein,fileou);
+		leido=mergesort(leido);
+	}
+	else if (action && ((strcmp(action, "--sel") == 0) || (strcmp(action, "-s") == 0))){
+		//printf("Invocando el metodo selectionsort con input '%s' y output '%s'\n",filein,fileou);
+		leido=selectionsort(leido);
+	}
+	else
+	{
+		fprintf(stderr, "Unknown action\n");
 
-
-	leido=mergesort(leido);
+		free(leido);
+		fclose(fdi);
+		fclose(fdo);
+		return 1;
+	}
 
 	fputs(leido,fdo);
-	printf("\n");
+
 
 	free(leido);
 
@@ -171,36 +173,33 @@ int procesar_mergesort(const char* filein,const char* fileou) {
 	return 0; /*Successfully finished*/
 }
 
-int procesar_selectionsort(const char* filein,const char* fileou) {
-    FILE *fdi, *fdo;
-    char* leido=0;
-
-    fdi=strcmp(filein,"stdin") ?fopen(filein,"rb"):stdin;
-	if (!fdi) return -1; /* Error while opening input file */
-    fdo=strcmp(fileou,"stdout")?fopen(fileou,"wt"):stdout;
-	if (!fdo) return -2; /* Error while opening output file */
-
-	long size=filesize(&fdi);
-
-	leido=malloc((size)*sizeof(char));
-
-	fgets(leido,size+1,fdi);
-
-	printf("texto leido: %s\n",leido);
-
-
-	leido=selectionsort(leido);
-
-	fputs(leido,fdo);
-	printf("\n");
-
-	free(leido);
-
-
-	fclose(fdi);
-	fclose(fdo);
-	return 0; /*Successfully finished*/
-}
+//int procesar_selectionsort(const char* filein,const char* fileou) {
+//    FILE *fdi, *fdo;
+//    char* leido=0;
+//
+//    fdi=strcmp(filein,"stdin") ?fopen(filein,"rb"):stdin;
+//	if (!fdi) return -1; /* Error while opening input file */
+//    fdo=strcmp(fileou,"stdout")?fopen(fileou,"wt"):stdout;
+//	if (!fdo) return -2; /* Error while opening output file */
+//
+//	long size=filesize(&fdi);
+//
+//	leido=malloc((size)*sizeof(char));
+//
+//	fgets(leido,size+1,fdi);
+//
+//	leido=selectionsort(leido);
+//
+//	fputs(leido,fdo);
+//	printf("\n");
+//
+//	free(leido);
+//
+//
+//	fclose(fdi);
+//	fclose(fdo);
+//	return 0; /*Successfully finished*/
+//}
 
 char* mergesort(char* list){
 
@@ -225,7 +224,6 @@ char* mergesort(char* list){
 	right=mergesort(right);
 
 	result=merge(left,right);
-
 
 	return result;
 
