@@ -10,7 +10,6 @@ void PrintFileError(char* filename);
 int decodeProcess(const char* filein,const char* fileou);
 int encodeProcess(const char* input, const char* output, int lineLength);
 int procesar_ordenamiento(const char* filein,const char* fileou, char* action);
-//int procesar_selectionsort(const char* filein,const char* fileou);
 char* mergesort(char* list);
 char* selectionsort(char* list);
 long filesize(FILE** fd);
@@ -75,8 +74,6 @@ int main(int argc, char* argv[])
 
     	numArg++;
     }
-
-    printf("\n");
 
     if (showVersion){
     	if (argc>2){
@@ -172,34 +169,6 @@ int procesar_ordenamiento(const char* filein,const char* fileou, char* action) {
 	fclose(fdo);
 	return 0; /*Successfully finished*/
 }
-
-//int procesar_selectionsort(const char* filein,const char* fileou) {
-//    FILE *fdi, *fdo;
-//    char* leido=0;
-//
-//    fdi=strcmp(filein,"stdin") ?fopen(filein,"rb"):stdin;
-//	if (!fdi) return -1; /* Error while opening input file */
-//    fdo=strcmp(fileou,"stdout")?fopen(fileou,"wt"):stdout;
-//	if (!fdo) return -2; /* Error while opening output file */
-//
-//	long size=filesize(&fdi);
-//
-//	leido=malloc((size)*sizeof(char));
-//
-//	fgets(leido,size+1,fdi);
-//
-//	leido=selectionsort(leido);
-//
-//	fputs(leido,fdo);
-//	printf("\n");
-//
-//	free(leido);
-//
-//
-//	fclose(fdi);
-//	fclose(fdo);
-//	return 0; /*Successfully finished*/
-//}
 
 char* mergesort(char* list){
 
