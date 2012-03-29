@@ -206,8 +206,6 @@ char* selectionSort(char* list, long length) {
 	long i, j;
 	long minPos;
 
-	//int length=strlen(list);
-	 
 	for (i = 0; i < length; i++) {
 	    minPos = i;
 
