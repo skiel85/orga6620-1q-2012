@@ -148,11 +148,11 @@ int procesarOrdenamiento(const char* filein,const char* fileou, char* action) {
 	fgets(leido,size+1,fdi);
 
 	if (!action || ((strcmp(action, "--merge") == 0) || (strcmp(action, "-m") == 0))){
-		/*printf("Invocando el metodo mergeSort con input '%s' y output '%s'\n",filein,fileou);*/
+		/* Invocando el metodo mergeSort */
 		leido=mergeSort(leido);
 	}
 	else if (action && ((strcmp(action, "--sel") == 0) || (strcmp(action, "-s") == 0))){
-		/*printf("Invocando el metodo selectionSort con input '%s' y output '%s'\n",filein,fileou);*/
+		/*Invocando el metodo selectionSort */
 		leido=selectionSort(leido);
 	}
 	else
