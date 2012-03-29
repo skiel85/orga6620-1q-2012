@@ -9,9 +9,9 @@ void PrintParameterError(char* param);
 void PrintFileError(char* filename);
 int decodeProcess(const char* filein,const char* fileou);
 int encodeProcess(const char* input, const char* output, int lineLength);
-int procesar_ordenamiento(const char* filein,const char* fileou, char* action);
-char* mergesort(char* list);
-char* selectionsort(char* list);
+int procesarOrdenamiento(const char* filein,const char* fileou, char* action);
+char* mergeSort(char* list);
+char* selectionSort(char* list);
 long filesize(FILE** fd);
 char* merge(char* left, char* right);
 void swap(char* array, int index1, int index2);
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
         if (!output)
         	output = "stdout";
 
-        error=procesar_ordenamiento(input, output, action);
+        error=procesarOrdenamiento(input, output, action);
 
         if (error==-1){
         	PrintFileError(input);
@@ -124,15 +124,15 @@ int main(int argc, char* argv[])
 }
 
 long filesize(FILE **fd){
-	fseek(*fd, 0, SEEK_END); // seek to end of file
-	long size = ftell(*fd); // get current file pointer
-	fseek(*fd, 0, SEEK_SET); // seek back to beginning of file
-	// proceed with allocating memory and reading the file
+	fseek(*fd, 0, SEEK_END); /* seek to end of file*/
+	long size = ftell(*fd); /* get current file pointer*/
+	fseek(*fd, 0, SEEK_SET); /* seek back to beginning of file*/
+	/* proceed with allocating memory and reading the file*/
 
 	return size;
 }
 
-int procesar_ordenamiento(const char* filein,const char* fileou, char* action) {
+int procesarOrdenamiento(const char* filein,const char* fileou, char* action) {
     FILE *fdi, *fdo;
     char* leido=0;
 
@@ -148,12 +148,12 @@ int procesar_ordenamiento(const char* filein,const char* fileou, char* action) {
 	fgets(leido,size+1,fdi);
 
 	if (!action || ((strcmp(action, "--merge") == 0) || (strcmp(action, "-m") == 0))){
-		//printf("Invocando el metodo mergesort con input '%s' y output '%s'\n",filein,fileou);
-		leido=mergesort(leido);
+		/*printf("Invocando el metodo mergeSort con input '%s' y output '%s'\n",filein,fileou);*/
+		leido=mergeSort(leido);
 	}
 	else if (action && ((strcmp(action, "--sel") == 0) || (strcmp(action, "-s") == 0))){
-		//printf("Invocando el metodo selectionsort con input '%s' y output '%s'\n",filein,fileou);
-		leido=selectionsort(leido);
+		/*printf("Invocando el metodo selectionSort con input '%s' y output '%s'\n",filein,fileou);*/
+		leido=selectionSort(leido);
 	}
 	else
 	{
@@ -176,7 +176,7 @@ int procesar_ordenamiento(const char* filein,const char* fileou, char* action) {
 	return 0; /*Successfully finished*/
 }
 
-char* mergesort(char* list){
+char* mergeSort(char* list){
 
 	char* left=0;
 	char* right=0;
@@ -193,8 +193,8 @@ char* mergesort(char* list){
 	left=substring(list,0,middle);
 	right=substring(list,middle+1,lengthRight);
 
-	left=mergesort(left);
-	right=mergesort(right);
+	left=mergeSort(left);
+	right=mergeSort(right);
 
 	result=merge(left,right);
 
@@ -203,7 +203,7 @@ char* mergesort(char* list){
 
 }
 
-char* selectionsort(char* list) {
+char* selectionSort(char* list) {
 
 	int i, j;
 	int minPos;
