@@ -15,6 +15,7 @@ char* selectionsort(char* list);
 long filesize(FILE** fd);
 char* merge(char* left, char* right);
 void swap(char* array, int index1, int index2);
+char *substring(char *string, int position, int length);
 
 
 int main(int argc, char* argv[])
@@ -28,6 +29,11 @@ int main(int argc, char* argv[])
     char* output = 0;
 
     int numArg = 1;
+
+    if (argc>4){
+        PrintTooManyParamError();
+        return 1;
+    }
 
     while (numArg < argc && !showVersion && !showHelp && !showUnknownParam){
     	char* param = argv[numArg];
@@ -172,8 +178,8 @@ int procesar_ordenamiento(const char* filein,const char* fileou, char* action) {
 
 char* mergesort(char* list){
 
-	char* left;
-	char* right;
+	char* left=0;
+	char* right=0;
 	char* result=list;
 
 	long length=strlen(list);
@@ -181,18 +187,17 @@ char* mergesort(char* list){
 	if(length==1)
 		return result;
 
-
 	long middle=length/2;
-	left=malloc((middle)*sizeof(char));
-	strncpy(left,list,middle);
+	long lengthRight=length-middle;
 
-	right=malloc((length-middle)*sizeof(char));
-	strncpy(right,list+middle,length-middle);
+	left=substring(list,0,middle);
+	right=substring(list,middle+1,lengthRight);
 
 	left=mergesort(left);
 	right=mergesort(right);
 
 	result=merge(left,right);
+
 
 	return result;
 
@@ -234,7 +239,7 @@ char* merge(char* left, char* right){
 	long length_left=strlen(left);
 	long length_right=strlen(right);
 
-	char* result=malloc((length_left+length_right)*sizeof(char));
+	char* result=malloc((length_left+length_right+1)*sizeof(char));
 
 	long i=0;
 	long j=0;
@@ -261,8 +266,37 @@ char* merge(char* left, char* right){
 		c++;
 	}
 
+	result[c]='\0';
+
 	return result;
 
+}
+
+char *substring(char *string, int position, int length)
+{
+   char *pointer;
+   int c;
+
+   pointer = malloc(length+1);
+
+   if( pointer == NULL )
+   {
+      printf("Unable to allocate memory.\n");
+      exit(EXIT_FAILURE);
+   }
+
+   for( c = 0 ; c < position -1 ; c++ )
+      string++;
+
+   for( c = 0 ; c < length ; c++ )
+   {
+      *(pointer+c) = *string;
+      string++;
+   }
+
+   *(pointer+c) = '\0';
+
+   return pointer;
 }
 
 void PrintTooManyParamError()
