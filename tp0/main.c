@@ -10,11 +10,11 @@ void PrintFileError(char* filename);
 int decodeProcess(const char* filein,const char* fileou);
 int encodeProcess(const char* input, const char* output, int lineLength);
 int procesarOrdenamiento(const char* filein,const char* fileou, char* action);
-char* mergeSort(char* list);
-char* selectionSort(char* list);
+char* mergeSort(char* list, long length);
+char* selectionSort(char* list, long length);
 long filesize(FILE** fd);
 char* merge(char* left, char* right);
-void swap(char* array, int index1, int index2);
+void swap(char* array, long index1, long index2);
 char *substring(char *string, int position, int length);
 
 
@@ -134,7 +134,7 @@ long filesize(FILE **fd){
 
 int procesarOrdenamiento(const char* filein,const char* fileou, char* action) {
     FILE *fdi, *fdo;
-    char* leido=0;
+    void* leido=0;
 
     fdi=strcmp(filein,"stdin") ?fopen(filein,"rb"):stdin;
 	if (!fdi) return -1; /* Error while opening input file */
@@ -145,15 +145,15 @@ int procesarOrdenamiento(const char* filein,const char* fileou, char* action) {
 
 	leido=malloc((size)*sizeof(char));
 
-	fgets(leido,size+1,fdi);
+	fread(leido, sizeof(char), size, fdi);
 
 	if (!action || ((strcmp(action, "--merge") == 0) || (strcmp(action, "-m") == 0))){
 		/* Invocando el metodo mergeSort */
-		leido=mergeSort(leido);
+		leido=mergeSort((char*)leido,size);
 	}
 	else if (action && ((strcmp(action, "--sel") == 0) || (strcmp(action, "-s") == 0))){
 		/*Invocando el metodo selectionSort */
-		leido=selectionSort(leido);
+		leido=selectionSort((char*)leido,size);
 	}
 	else
 	{
@@ -176,13 +176,11 @@ int procesarOrdenamiento(const char* filein,const char* fileou, char* action) {
 	return 0; /*Successfully finished*/
 }
 
-char* mergeSort(char* list){
+char* mergeSort(char* list, long length){
 
 	char* left=0;
 	char* right=0;
 	char* result=list;
-
-	long length=strlen(list);
 
 	if(length==1)
 		return result;
@@ -193,8 +191,8 @@ char* mergeSort(char* list){
 	left=substring(list,0,middle);
 	right=substring(list,middle+1,lengthRight);
 
-	left=mergeSort(left);
-	right=mergeSort(right);
+	left=mergeSort(left, middle);
+	right=mergeSort(right, lengthRight);
 
 	result=merge(left,right);
 
@@ -203,12 +201,12 @@ char* mergeSort(char* list){
 
 }
 
-char* selectionSort(char* list) {
+char* selectionSort(char* list, long length) {
 
-	int i, j;
-	int minPos;
+	long i, j;
+	long minPos;
 
-	int length=strlen(list);
+	//int length=strlen(list);
 	 
 	for (i = 0; i < length; i++) {
 	    minPos = i;
@@ -227,7 +225,7 @@ char* selectionSort(char* list) {
 	return list;
 }
 
-void swap(char* array, int index1, int index2) {
+void swap(char* array, long index1, long index2) {
 	char aux = array[index1];
 	array[index1] = array[index2];
 	array[index2] = aux;
