@@ -112,8 +112,6 @@ int main(int argc, char** argv){
 	if (codigo_retorno==0)
 		codigo_retorno=procesarEntrada(&datos_sort, argv, argc, optind, &path_error_entrada);	
 
-	tDynArray temp;
-
 	/* Ordenamiento de los datos introducidos al programa, con el algoritmo correspondiente */
 	if ((codigo_retorno==0) && (algoritmo_sort==1)) {
 		codigo_retorno=mergeSort(datos_sort.data,datos_sort.size);

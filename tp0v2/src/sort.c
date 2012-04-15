@@ -31,6 +31,8 @@ int mergeSort(char *list, unsigned long length) {
 		list[i] = tmp[i];
 
 	free(tmp); /* Liberamos la memoria reservada para el array temporal */
+
+	return (EXIT_SUCCESS);
 }
 
 void swap(char* array, unsigned long index1, unsigned long index2) {
