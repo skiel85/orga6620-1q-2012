@@ -5,96 +5,32 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* merge(char* left, char* right){
 
-	unsigned long length_left=strlen(left);
-	unsigned long length_right=strlen(right);
+int mergeSort(char *list, unsigned long length) {
 
-	char* result=malloc((length_left+length_right+1)*sizeof(char));
+	unsigned long i, j, k, f = length / 2; /* Inicializamos la variable f con la mitad de la longitud del array */
+	char* tmp; /* Array temporal */
 
-	unsigned long i=0;
-	unsigned long j=0;
-	unsigned long c=0;
-
-	while(i<length_left || j<length_right){
-		if (i<length_left && j<length_right){
-			if (left[i]<=right[j]){
-				result[c]=left[i];
-				i++;
-			} else {
-				result[c]=right[j];
-				j++;
-			}
-
-		} else if(i<length_left){
-			result[c]=left[i];
-			i++;
-		} else if(j<length_right) {
-			result[c]=right[j];
-			j++;
-		}
-
-		c++;
-	}
-
-	result[c]='\0';
-
-	return result;
-}
-
-char *substring(char *string, int position, int length)
-{
-   char *pointer;
-   unsigned long c;
-
-   pointer = malloc(length+1);
-
-   if( pointer == NULL )
-   {
-      exit(EXIT_FAILURE);
-   }
-
-   for( c = 0 ; c < position -1 ; c++ )
-      string++;
-
-   for( c = 0 ; c < length ; c++ )
-   {
-      *(pointer+c) = *string;
-      string++;
-   }
-
-   *(pointer+c) = '\0';
-
-   return pointer;
-}
-
-int mergeSort(char* list, unsigned long length) {
-
-	char* left=NULL;
-	char* right=NULL;
-	char* result=list;
-
-	printf("MERGESORT!");
-	
-	if(length==1)
+	if (length == 1) /* Si es un ordenamiento trivial no hacemos nada */
 		return (EXIT_SUCCESS);
 
-	unsigned long middle=length/2;
-	unsigned long lengthRight=length-middle;
+	mergeSort(list, f); /* Llamamos al sort con la primer mitad */
+	mergeSort(list + f, length - f); /* Llamamos al sort con la segunda mitad */
+	tmp = (char*)malloc(length*sizeof(char)); /* Hacemos la union de ambas partes */
 
-	left=substring(list,0,middle);
-	right=substring(list,middle+1,lengthRight);
+	for (i = 0, j = f, k = 0; i < f && j < length;)
+		tmp[k++] = (list[i] < list[j]) ? list[i++] : list[j++];
 
-	mergeSort(left, middle);
-	mergeSort(right, lengthRight);
+	/* Hacemos merge del resto */
+	while (i < f)
+		tmp[k++] = list[i++];
+	while (j < length)
+		tmp[k++] = list[j++];
 
-	result=merge(left,right);
-	list=result;
+	for (i = 0; i < length; i++)
+		list[i] = tmp[i];
 
-	free(left);
-	free(right);
-
-	return (EXIT_SUCCESS);
+	free(tmp); /* Liberamos la memoria reservada para el array temporal */
 }
 
 void swap(char* array, unsigned long index1, unsigned long index2) {
