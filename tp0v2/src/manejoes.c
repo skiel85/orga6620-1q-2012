@@ -22,6 +22,12 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 	}
 
 	aux_char = (char*)malloc(sizeof(char));
+	if (aux_char==NULL) {
+		free(aux_char);
+		aux_char=NULL;
+		return(ERROR_RESERVA_MEMORIA);
+	}
+
 	for (i=0; i<cantidad_archivos; i++) {
 
 		if (archivo_entrada!=stdin) {

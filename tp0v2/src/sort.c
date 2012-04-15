@@ -9,14 +9,20 @@
 int mergeSort(char *list, unsigned long length) {
 
 	unsigned long i, j, k, f = length / 2; /* Inicializamos la variable f con la mitad de la longitud del array */
-	char* tmp; /* Array temporal */
+	char* tmp = NULL; /* Array temporal */
 
 	if (length == 1) /* Si es un ordenamiento trivial no hacemos nada */
 		return (EXIT_SUCCESS);
 
 	mergeSort(list, f); /* Llamamos al sort con la primer mitad */
 	mergeSort(list + f, length - f); /* Llamamos al sort con la segunda mitad */
+
 	tmp = (char*)malloc(length*sizeof(char)); /* Hacemos la union de ambas partes */
+	if (tmp==NULL) {
+		free(tmp);
+		tmp=NULL;
+		return(ERROR_RESERVA_MEMORIA);
+	}
 
 	for (i = 0, j = f, k = 0; i < f && j < length;)
 		tmp[k++] = (list[i] < list[j]) ? list[i++] : list[j++];
