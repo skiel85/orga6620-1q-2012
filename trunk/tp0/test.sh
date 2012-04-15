@@ -1,5 +1,6 @@
-gcc -Wall -Wextra -O0 -g main.c -o tp0
 rm temp/*
+rm tp0
+gcc -Wall -Wextra -O0 -g main.c -o tp0
 
 echo "Ordenar números con selection sort."
 echo -n "9876543210" > temp/digits.source
