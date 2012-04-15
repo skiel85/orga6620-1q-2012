@@ -13,7 +13,7 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 	unsigned long cantidad_archivos=(argc-optind);
 	FILE* archivo_entrada=NULL;
 
-	char aux_char;
+	char* aux_char=NULL;
 	char* aux_data=NULL;
 
 	if (cantidad_archivos==0) {
@@ -30,8 +30,8 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 			}
 		}
 
-		while ((aux_char=fgetc(archivo_entrada))!=EOF) {
-			datos_sort->data[j]=aux_char;
+		while (fread(aux_char, sizeof(char), 1, archivo_entrada)) {
+			datos_sort->data[j]=aux_char[0];
 			datos_sort->size++;
 
 			if (datos_sort->size==datos_sort->allocated) {
