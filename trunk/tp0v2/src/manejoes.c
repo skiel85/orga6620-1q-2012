@@ -13,7 +13,7 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 	unsigned long cantidad_archivos=(argc-optind);
 	FILE* archivo_entrada=NULL;
 
-	char* aux_char;
+	char* aux_char=NULL;
 	char* aux_data=NULL;
 
 	if (cantidad_archivos==0) {
@@ -21,6 +21,7 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 		cantidad_archivos=1;
 	}
 
+	aux_char = (char*)malloc(sizeof(char));
 	for (i=0; i<cantidad_archivos; i++) {
 
 		if (archivo_entrada!=stdin) {
@@ -29,7 +30,7 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 				return ERROR_ARCHIVO_ENTRADA;
 			}
 		}
-		aux_char = (char*)malloc(sizeof(char));
+
 		while (fread(aux_char, sizeof(char), 1, archivo_entrada)) {
 			datos_sort->data[j]=aux_char[0];
 			datos_sort->size++;
@@ -47,13 +48,13 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 
 			j++;
 		}
-		free(aux_char);
 
 		if (archivo_entrada!=stdin)			
 			fclose (archivo_entrada);
 
 	}
 
+	free(aux_char);
 	return (EXIT_SUCCESS);
 }
 
