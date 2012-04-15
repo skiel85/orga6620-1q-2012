@@ -165,7 +165,7 @@ int procesarOrdenamiento(const char* filein,const char* fileou, char* action) {
 		return 1;
 	}
 
-	fputs(leido,fdo);
+	fwrite(leido, 1, size, fdo);
 
 
 	free(leido);
@@ -208,8 +208,8 @@ char* selectionSort(char* list, long length) {
 
 	for (i = 0; i < length; i++) {
 	    minPos = i;
-
 	    for (j = i+1; j < length; j++) {
+	        //printf("i=%i list[i]=%c j=%i list[j]=%c\n", i, list[i], j, list[j]);
 		if (list[j] < list[minPos]) {
 		    minPos = j;
 		}
@@ -217,6 +217,7 @@ char* selectionSort(char* list, long length) {
 	 
 	    if ( minPos != i ) {
 		swap(list, i, minPos);
+	        //printf("swap %i %c %i %c\n", i, list[i], minPos, list[minPos]);
 	    }
 	}
 
