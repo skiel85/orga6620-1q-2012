@@ -13,7 +13,7 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 	unsigned long cantidad_archivos=(argc-optind);
 	FILE* archivo_entrada=NULL;
 
-	char* aux_char=NULL;
+	char* aux_char;
 	char* aux_data=NULL;
 
 	if (cantidad_archivos==0) {
