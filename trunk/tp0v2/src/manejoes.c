@@ -58,7 +58,7 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 
 int imprimirSalida(tDynArray* datos_sort) {
 
-	printf("%s", datos_sort->data);
+	fwrite(datos_sort->data, sizeof(char), datos_sort->size, stdout);
 	return (EXIT_SUCCESS);
 }
 
