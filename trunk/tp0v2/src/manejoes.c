@@ -29,7 +29,7 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 				return ERROR_ARCHIVO_ENTRADA;
 			}
 		}
-
+		aux_char = (char*)malloc(sizeof(char));
 		while (fread(aux_char, sizeof(char), 1, archivo_entrada)) {
 			datos_sort->data[j]=aux_char[0];
 			datos_sort->size++;
@@ -47,6 +47,7 @@ int procesarEntrada(tDynArray* datos_sort, char** argv, int argc, int optind, ch
 
 			j++;
 		}
+		free(aux_char);
 
 		if (archivo_entrada!=stdin)			
 			fclose (archivo_entrada);
