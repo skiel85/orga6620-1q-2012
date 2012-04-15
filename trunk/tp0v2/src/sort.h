@@ -5,7 +5,7 @@
 
 	#include "manejoes.h"
 	#include "def_errores.h"
-	
+
 	int mergeSort(char* list, unsigned long length);
 	int selectionSort(tDynArray* list);
 			
