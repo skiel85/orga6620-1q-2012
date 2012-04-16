@@ -1,0 +1,14 @@
+\select@language {spanish}
+\contentsline {section}{\numberline {1}Resumen}{6}
+\contentsline {section}{\numberline {2}Dise\IeC {\~n}o e Implementaci\IeC {\'o}n}{6}
+\contentsline {subsection}{\numberline {2.1}procesar\_ordenamiento}{6}
+\contentsline {subsection}{\numberline {2.2}mergeSort}{6}
+\contentsline {subsection}{\numberline {2.3}selectionSort}{7}
+\contentsline {section}{\numberline {3}Instrucciones de Compilaci\IeC {\'o}n}{7}
+\contentsline {section}{\numberline {4}Corridas de Prueba}{8}
+\contentsline {subsection}{\numberline {4.1}Corridas exitosas}{8}
+\contentsline {subsection}{\numberline {4.2}Mensajes de Error}{10}
+\contentsline {section}{\numberline {5}Mediciones y Profiling}{12}
+\contentsline {section}{\numberline {6}C\IeC {\'o}digo fuente}{13}
+\contentsline {subsection}{\numberline {6.1}Lenguaje C}{13}
+\contentsline {section}{\numberline {7}Conclusiones}{19}

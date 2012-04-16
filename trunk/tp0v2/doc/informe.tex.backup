@@ -1,0 +1,218 @@
+\documentclass[a4paper,10pt]{article}
+%%!TEX encoding = UTF-8 Unicode
+\usepackage{graphicx}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\lstset{basicstyle=\footnotesize,
+stringstyle=\ttfamily,
+showstringspaces=false,
+frameround=fttt}
+\usepackage{anysize}
+\marginsize{3.5cm}{3.5cm}{2cm}{2cm}
+%bordes en header y footer
+\usepackage{fancyhdr}
+\chead{TP N$^{\circ}$ 0 - Infraestructura básica}
+\lhead{}
+\rhead{}
+\lfoot{66.20 - Organización de Computadoras}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.35pt}
+\renewcommand{\footrulewidth}{0.35pt}
+\textheight 630pt
+\topmargin 0pt
+\pagestyle{fancy}
+%%%%%%%%%%
+
+\title{		\textbf{TRABAJO PRACTICO N$^{\circ}$ 0}\\ \textbf{Infraestructura básica}}
+
+\author{	
+	    Ezequiel Paez, \textit{Padrón Nro. }                     \\
+            \texttt{  }                                            \\[2.5ex]
+            Juan Manuel Gonzales, \textit{Padrón Nro. }                     \\
+            \texttt{  }                                              \\[2.5ex]
+            Osiris Argüello, \textit{Padrón Nro. 83062}                     \\
+            \texttt{ osirisarguello@yahoo.com.ar }                                              \\[2.5ex]
+            \normalsize{1er. Cuatrimestre de 2012}                                      \\
+            \normalsize{66.20 Organización de Computadoras - Curso 02}  \\
+            \normalsize{Facultad de Ingeniería, Universidad de Buenos Aires}            \\
+       }
+\date{}
+
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}   
+\newpage
+\setcounter{page}{5} 
+\tableofcontents
+\newpage
+
+\section{Resumen}
+En el presente trabajo práctico, se deben implementar en un programa en lenguaje C dos algoritmos de ordenamiento: Mergesort y Selection sort.
+Una vez implementados, procederemos a realizar mediciones para evaluar las posibilidades de mejora y el desempeño relativo entre ambas implementaciones, utilizando los programas time y gprof.
+
+
+\section{Diseño e Implementación}
+El diseño de la aplicación se realizó pensando en varias <<capas>>. Una capa es encargada de analizar y validar opciones de ejecución, otra capa, la encargada de realizar las operaciones principales de conversión y otras más pequeñas encargadas de emitir mensajes de error o información de ayuda en pantalla para el usuario.\\
+
+Dado que la aplicación puede tomar parámetros variables de ejecución o adoptar valores por defecto, se realizó un análisis completo de todas las opciones que un usuario puede ingresar, aceptando aquellas que fueren válidas y rechazando las que no, con el consiguiente mensaje de error que el usuario visualizará en pantalla.\\
+
+La aplicación fue implementada en lenguaje ANSI C, es decir que está garantizada la compilación exitosa ante la utilización de la opción \textit{-ansi}.\\
+
+La siguiente capa importante, es la capa de los algoritmos de ordenamiento. Se desarrollaron dos algoritmos de ordenamiento: \textit{mergesort} y \textit{selectionsort}. \\
+
+La implementación para ambos algoritmos básicamente consta de procesos similares, ligeramente diferenciados en el punto en que se invoca una función ANSI C distinta de acuerdo al tipo de ordenamiento que se esté realizando. Como primer paso del algoritmo, se abre el \textit{stream} de entrada de datos que es especificado por el usuario. De no resultar satisfactoria esta operación, ya sea porque el archivo no existe o se produjere un fallo en el disco en el momento de la apertura, se retorna de inmediato el correspondiente código de error.\\
+Si el archivo es abierto satisfactoriamente se procede a leer su contenido, realizando el ordenamiento indicado por el usuario y el resultado de dicha operación es volcado al archivo de salida también especificado en los parámetros de ejecución.\\
+
+Las principales funciones en nuestra implementación son las siguientes:
+
+\subsection{procesar\_mergesort y procesar\_selectionsort}
+Estos métodos se encargan de tomar los archivos de entrada y salida, abrirlos y luego ejecutar el método de ordenamiento correspondiente.
+Por último devuelven el resultado en el archivo de salida indicado.
+
+\subsection{mergesort}
+Este método toma el array de caracteres leido del archivo, lo divide en 2 partes e invoca recursivamente la funcion \textbf{mergesort} sobre cada parte.
+Como ultimo paso invoca a la funcion \textbf{merge} para fusionar ambas partes, ordenandolas.
+
+\subsection{selectionsort}
+Este método recorre el array de caracteres, buscando el menor caracter en cada iteración y ubicandolo al principio del array.
+
+\section{Instrucciones de Compilación}
+
+Si el objetivo es exclusivamente obtener el ejecutable y probar la aplicación, las instrucciones básicas para compilación mediante línea de comandos (situado en el directorio que contiene el archivo <<main.c>>) son:\\
+
+\begin{center}
+\textit{\$ gcc -o tp0 main.c}\\
+\end{center}
+
+Donde:
+\begin{itemize}
+\item -o: archivo de salida (en este caso, tp0).
+\end{itemize}
+
+Si en cambio, se desean visualizar todos los mensajes de advertencia, verificar problemas de acceso a memoria, depurar el código, optimizarlo, etc., las opciones de compilación pueden ser:\\
+
+\begin{center}
+\textit{\$ gcc -Wall -g -o tp0 main.c}\\
+\end{center}
+
+Donde:
+\begin{itemize}
+\item -Wall: permite que se visualicen todos los mensajes de advertencia, 
+\item -g: permite realizar un seguimiento generando información de depuración. Por ejemplo, con algún \textit{<<profiler>>} como \textit{\textbf{gdb}},
+\item -o: archivo de salida (en este caso, tp0)
+\end{itemize}
+
+Para generar el código assembler se utiliza:\\
+\begin{center}
+\textit{\$ gcc -Wall -O0 -S -mrnames main.c},
+\end{center}
+
+Donde:
+\begin{itemize}
+\item -O0: indica nivel cero de optimización,
+\item -S: envía la instrucción de no ejecutar el linker luego de generar el código assembler en el archivo \textit{main.s},
+\item -mrnames (solo para MIPS): indica al compilador que genere la salida utilizando nombre de registro en lugar de número de registro.
+\end{itemize}
+
+\newpage
+\section{Corridas de Prueba}
+
+\subsection{Corridas exitosas}
+
+Mensaje de ayuda. Se obtiene utilizando los comandos -h o --help.\\
+
+\begin{figure}[!htp]
+  \centering
+    \includegraphics[width=9 cm]{tp0_opcion_help.png}
+  \caption{Mensaje de ayuda}
+  \label{Figura1}
+\end{figure}
+
+Versión del programa. Se obtiene utilizando los comandos -V o --version.\\
+
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[width=9 cm]{tp0_opcion_version.png}
+	\caption{Mensaje de versión del programa}
+	\label{Figura2}
+\end{figure}
+
+Para esta corrida se eligió ordenar un archivo con dígitos y se prueban ambos métodos de ordenamiento. En el primer caso, al no pasar parámetro se está tomando por defecto el ordenamiento por mergesort.
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[width=9 cm]{tp0_corrida_exitosa_0.png}
+	\caption{Ordenar digitos.txt}
+	\label{Figura3}
+\end{figure}
+
+Para la siguiente corrida se eligió ordenar un archivo de caracteres con minusculas y mayusculas y se corren ambos métodos de ordenamiento.
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[width=9 cm]{tp0_corrida_exitosa_1.png}
+	\caption{Ordenar digitos.txt}
+	\label{Figura4}
+\end{figure}
+
+En esta corrida se eligió ordenar un archivo con caracteres aleatorios.
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[width=9 cm]{tp0_corrida_exitosa_2.png}
+	\caption{Ordenar digitos.txt}
+	\label{Figura5}
+\end{figure}
+
+
+
+\newpage
+\subsection{Mensajes de Error}
+Las siguientes situaciones producen mensajes de error:\\
+
+Si ocurre un fallo al abrir el file, se mostrará el mensaje de la figura junto con el nombre del file.\\
+
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[width=9 cm]{tp0_error_openfile.png}
+	\caption{Error al abrir el file}
+	\label{Figura6}
+\end{figure}
+
+\newpage
+Si al ejecutar se ingresan más parámetros de los que puede interpretar el programa, se mostrará el mensaje de la figura y seguido el menú de ayuda.\\
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[height=2 cm]{tp0_error_2manyparam.png}
+	\caption{Error debido a muchos parámetros}
+	\label{Figura7}
+\end{figure}
+
+Si al ejecutar se ingresa algún parámetro inesperado por el programa, se mostrará el mensaje de la figura junto con el parámetro desconocido y el menú de ayuda.\\
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[height=4.3 cm]{tp0_error_unknownparam.png}
+	\caption{Error por parámetro desconocido}
+	\label{Figura8}
+\end{figure}
+
+\newpage
+\section{Código fuente}
+ 
+\newpage
+\section{Conclusiones}
+
+\begin{thebibliography}{99}
+
+\bibitem{HEN00} ``Computer Architecture. A Quantitative Approach'', J. L. Hennessy and D. A. Patterson, 3ra Edición, Morgan Kaufmann Publishers, 2000.
+
+\bibitem{PRO01} ``Taller de Programacion I'', Gabriel Agustín Praino
+
+\bibitem{LAT02} ``Usando \LaTeX{} 1.97'', Laura M. Castro Souto, Juan José Iglesias González, http://latex.gpul.org/html/index.html
+
+\end{thebibliography}
+
+
+\end{document}
+
