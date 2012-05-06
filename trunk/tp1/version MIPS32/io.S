@@ -60,7 +60,8 @@ read_error:
 read_unwind:
 		lw		gp,O_GP(sp)
 		lw		fp,O_FP(sp)
-		lw		ra,O_RA(sp) 
+		lw		ra,O_RA(sp)
+		addu	sp,sp,SSIZE
 		
 		jr		ra
 
@@ -108,7 +109,8 @@ write_error:
 write_unwind:
 		lw		gp,O_GP(sp)
 		lw		fp,O_FP(sp)
-		lw		ra,O_RA(sp) 
+		lw		ra,O_RA(sp)
+		addu	sp,sp,SSIZE
 		
 		jr		ra
 		.end		my_write
