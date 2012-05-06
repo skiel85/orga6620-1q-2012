@@ -3,32 +3,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "def_errores.h"
 #include "manejoes.h"
 #include "mymalloc.h"
 
+void * mymemcpy (void * destination, const void * source, size_t num) {
+
+	void * resultado = destination;
+
+	while (num--) {
+		*(char *)destination = *(char *)source;
+		destination = (char *)destination + 1;
+		source = (char *)source + 1;
+	}
+
+	return(resultado);
+}
+
 void *myrealloc(void *ptr, size_t old_size, size_t size) {
 
-	//void *ptr_aux=NULL;
-
-	//if (size==0) {
-	//	if (ptr!=NULL)
-	//		myfree(ptr);
-	//	return (NULL);
-	//}
-
-	//ptr_aux = (void*)mymalloc(size);
-	//return (ptr_aux);
-	
 	int minsize;
 	void *newptr;
 	
-	// Allocate new block, returning NULL if not possible.
-	
+	// Allocate new block, returning NULL if not possible.	
 	newptr = mymalloc (size);
-	if (newptr == NULL) return NULL;
+	if (newptr == NULL)
+		return NULL;
 
-    // Don't copy/free original block if it was NULL.
-    if (ptr != NULL) {
+	// Don't copy/free original block if it was NULL.
+	if (ptr != NULL) {
 		// Get size to copy - mm_getsize must give you the size of the current block.
 		// But, if new size is smaller, only copy that much. Many implementations
 		// actually reserve the 16 bytes in front of the memory to store this info, e.g.,
@@ -38,17 +41,16 @@ void *myrealloc(void *ptr, size_t old_size, size_t size) {
 		//           ^
 		//           +--- this is your pointer.
 		// <- This is the memory actually allocated ->
-
+	
 		//minsize = mm_getsize (ptr);
-		if (size < old_size)
-			minsize = size;
-
-	// Copy the memory, free the old block and return the new block.
-		memcpy (newptr, ptr, minsize);
+		minsize = old_size;
+	
+		// Copy the memory, free the old block and return the new block.
+		mymemcpy (newptr, ptr, minsize);
 		myfree (ptr);
 	}
 
-    return newptr;	
+	return newptr;
 }
 
 int procesarEntrada(tDynArray* datos_sort) {
@@ -59,7 +61,6 @@ int procesarEntrada(tDynArray* datos_sort) {
 	char* aux_data=NULL;
 
 	while (my_read(stdinfd,&aux_char,1)) {
-		
 		datos_sort->data[i]=aux_char;
 		datos_sort->size++;
 		if (datos_sort->size==datos_sort->allocated) {
