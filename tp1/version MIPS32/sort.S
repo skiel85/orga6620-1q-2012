@@ -1,4 +1,5 @@
 #include <mips/regdef.h>
+#include "def_errores.h"
 
 .globl	mergeSort
 .ent	mergeSort
@@ -41,7 +42,6 @@ mergeSort:
 
 # Reservo memoria para *temp
 	lw		a0,60($fp)		# a0=length*sizeof(char)
-	addiu		a0,1			# SI NO RESERVO UN BYTE DE MAS SE CUELGA, HAY ALGO MAL EN ALGUN LADO
 	jal		mymalloc		# Llamada a mymalloc(length*sizeof(char))
 	beqz		v0,retorno_MEM		# Si mymalloc devuelve NULL, termino con error
 	move		t0,v0			# t0=*tmp
@@ -92,6 +92,9 @@ for_merge_cond:
 
 # Hacemos merge del resto
 while_i_f:
+	sltu		t5,t1,t2		# Guardo en t5 el resultado de la comparacion (i<f)
+	beqz		t5,while_j_l		# Si no se cumple la condicion no entro al WHILE
+while_i_f_bucle:
 	addu		t5,t0,t4		# Calculo la posición del elemento tmp[k]	
 	addu		t6,t8,t1		# Calculo la posición del elemento list[i]
 	lb		t7,0(t6)		# Cargo el valor de list[i] en t7		
@@ -102,9 +105,12 @@ while_i_f:
 	addiu		t4,1			# t4++
 	sw		t4,24($fp)		# k++
 	sltu		t5,t1,t2		# Guardo en t5 el resultado de la comparacion (i<f)
-	bnez		t5,while_i_f		# Si se cumple (i<f)
+	bnez		t5,while_i_f_bucle	# Si se cumple (i<f) sigo iterando
 
 while_j_l:
+	sltu		t5,t3,t9		# Guardo en t5 el resultado de la comparacion (j<length)
+	beqz		t5,for_final		# Si no se cumple la condicion no entro al WHILE
+while_j_l_bucle:
 	addu		t5,t0,t4		# Calculo la posición del elemento tmp[k]	
 	addu		t6,t8,t3		# Calculo la posición del elemento list[j]
 	lb		t7,0(t6)		# Cargo el valor de list[j] en t7		
@@ -115,14 +121,15 @@ while_j_l:
 	addiu		t4,1			# t4++
 	sw		t4,24($fp)		# k++
 	sltu		t5,t3,t9		# Guardo en t5 el resultado de la comparacion (j<length)
-	bnez		t5,while_j_l		# Si se cumple (j<length)
+	bnez		t5,while_j_l_bucle	# Si se cumple (j<length) sigo iterando
 
 # Copiamos el vector temporal como resultado
+for_final:
 	li		t1,0			# t1=0
 	sw		t1,16($fp)		# t1=i=0
 	lw		t2,60($fp)		# Cargo en t2 el valor de length
 	lw		t3,56($fp)		# Cargo el puntero a list en t3
-for_final:
+for_final_bucle:
 	addu		t5,t0,t1		# Calculo la posición del elemento tmp[i]	
 	addu		t6,t3,t1		# Calculo la posición del elemento list[i]
 	lb		t7,0(t5)		# Cargo el valor de tmp[i] en t7		
@@ -131,7 +138,7 @@ for_final:
 	addiu		t1,1			# t1++
 	sw		t1,16($fp)		# i++
 	sltu		t4,t1,t2		# Guardo en t3 el resultado de la comparacion (i<length)
-	bnez		t4,for_final		# Si se cumple (i<length)
+	bnez		t4,for_final_bucle	# Si se cumple (i<length)
 
 # Liberamos la memoria reservada para el array temporal
 	move		a0,t0			# a0=*tmp
@@ -140,7 +147,7 @@ for_final:
 
 # Guardo en v0 el codigo de retorno de la funcion ERROR_RESERVA_MEMORIA
 retorno_MEM:
-	li		v0,3			# v0=ERROR_RESERVA_MEMORIA
+	li		v0,ERROR_RESERVA_MEMORIA # v0=ERROR_RESERVA_MEMORIA
 	j		fin_mergeSort		# Salto al fin de la funcion
 
 # Guardo en v0 el codigo de retorno de la funcion EXIT_SUCCESS
