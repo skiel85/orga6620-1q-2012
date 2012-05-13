@@ -31,6 +31,7 @@ mergeSort:
 	lw		a0,56($fp)		# a0=list
 	lw		a1,28($fp)		# a1=f
 	jal		mergeSort		# Llamada recursiva a mergeSort(list,f), primera mitad del array original
+
 	lw		t0,56($fp)		# t0=list
 	lw		t1,60($fp)		# t1=length
 	lw		t2,28($fp)		# t2=f
@@ -40,6 +41,7 @@ mergeSort:
 
 # Reservo memoria para *temp
 	lw		a0,60($fp)		# a0=length*sizeof(char)
+	addiu		a0,1			# SI NO RESERVO UN BYTE DE MAS SE CUELGA, HAY ALGO MAL EN ALGUN LADO
 	jal		mymalloc		# Llamada a mymalloc(length*sizeof(char))
 	beqz		v0,retorno_MEM		# Si mymalloc devuelve NULL, termino con error
 	move		t0,v0			# t0=*tmp
@@ -48,7 +50,7 @@ mergeSort:
 	li		t1,0			# t1=0
 	sw		t1,16($fp)		# t1=i=0
 	lw		t2,28($fp)		# t2=f
-	move		t3,t2			# t2=t3 / f=j
+	lw		t3,28($fp)		# t3=f
 	sw		t3,20($fp)		# t3=j=f
 	li		t4,0			# t4=0
 	sw		t4,24($fp)		# t4=k=0
@@ -56,18 +58,37 @@ mergeSort:
 	lw		t9,60($fp)		# Cargo en t9 el valor de length
 
 for_merge:
-#	while ((i<f)&&(j<length)) {
-#
-#		iff (list[i]<list[j]) {
-#			tmp[k]=list[i];
-#			i++;
-#		}
-#		ellse {
-#			tmp[k]=list[j];
-#			j++;
-#		}
-#		k++;
-#	}
+	addu		t5,t8,t1		# Calculo la posición del elemento list[i]	
+	lb		t5,0(t5)		# Cargo en t5 el valor del elemento list[i]
+	addu		t6,t8,t3		# Calculo la posición del elemento list[j]
+	lb		t6,0(t6)		# Cargo en t5 el valor del elemento list[j]
+
+	sltu		t7,t5,t6		# Comparo list[i]<list[j]
+	beqz		t7,for_merge_else	# Si no se cumple salto al ELSE
+	
+	addu		t6,t0,t4		# Calculo la posición del elemento tmp[k]
+	sb		t5,0(t6)		# tmp[k]=list[i]
+
+	addiu		t1,1			# t1=i++
+	sw		t1,16($fp)		# Actualizo el valor de i
+	b		for_merge_cond		# Salteo el ELSE
+
+for_merge_else:
+	addu		t5,t0,t4		# Calculo la posición del elemento tmp[k]
+	sb		t6,0(t5)		# tmp[k]=list[i]
+
+	addiu		t3,1			# t3=j++
+	sw		t3,20($fp)		# Actualizo el valor de j
+
+for_merge_cond:
+	addiu		t4,1			# t4=k++
+	sw		t4,24($fp)		# Actualizo el valor de k
+
+	sltu		t5,t1,t2		# Comparo i<f
+	beqz		t5,while_i_f		# Si no se cumple salgo del FOR
+	sltu		t5,t3,t9		# Comparo j<length
+	beqz		t5,while_i_f		# Si no se cumple salgo del FOR
+	b		for_merge		# Si paso por las dos condiciones sigo iterando
 
 # Hacemos merge del resto
 while_i_f:
