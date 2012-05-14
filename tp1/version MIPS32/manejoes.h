@@ -4,8 +4,6 @@
   #define __MANEJOES_H__
 
 	#include "def_errores.h"
-	
-	#define BUFFER_SIZE 2048
 
 	typedef struct tDynArray {
 		char *data;
