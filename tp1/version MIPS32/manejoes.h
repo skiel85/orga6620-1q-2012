@@ -13,8 +13,8 @@
 		unsigned long allocated;
 	} tDynArray;
 		
-	int procesarEntrada(tDynArray* datos_sort);
-	int imprimirSalida(tDynArray* datos_sort);
+	extern int procesarEntrada(tDynArray* datos_sort);
+	extern int imprimirSalida(tDynArray* datos_sort);
 	
 #endif
 

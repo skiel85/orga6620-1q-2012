@@ -53,36 +53,5 @@ void *myrealloc(void *ptr, size_t old_size, size_t size) {
 	return newptr;
 }
 
-int procesarEntrada(tDynArray* datos_sort) {
-
-	unsigned long i=0;
-
-	char aux_char;
-	char* aux_data=NULL;
-
-	while (my_read(stdinfd,&aux_char,1)) {
-		datos_sort->data[i]=aux_char;
-		datos_sort->size++;
-		if (datos_sort->size==datos_sort->allocated) {
-			aux_data=datos_sort->data;
-			datos_sort->data=(char *)myrealloc(datos_sort->data, datos_sort->size, (datos_sort->allocated+BUFFER_SIZE)*sizeof(char));
-			if (datos_sort->data==NULL) {
-				myfree(aux_data);
-				aux_data=NULL;
-				return(ERROR_RESERVA_MEMORIA);
-			}
-			datos_sort->allocated=datos_sort->allocated+BUFFER_SIZE;
-		}
-		i++;
-	}
-	return (EXIT_SUCCESS);
-}
-
-int imprimirSalida(tDynArray* datos_sort) {
-
-	my_write(stdoutfd,datos_sort->data,datos_sort->size);
-	return (EXIT_SUCCESS);
-}
-
 /* FIN DE FUNCIONES DE E/S (manejoes.c) */
 
