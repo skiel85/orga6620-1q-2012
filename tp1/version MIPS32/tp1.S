@@ -71,7 +71,7 @@ main:
 # Reservo memoria inicial para los datos de entrada
 	li		a0,BUFFER_SIZE		# Bytes a alocar
 	jal		mymalloc		# Llamada a mymalloc
-	beqz		t0,alloc_error		# Salto si no se aloco memoria
+	beqz		v0,alloc_error		# Salto si no se aloco memoria
 
 # Inicializo datos de entrada
 	move		t0,v0
@@ -82,9 +82,30 @@ main:
 	sw		t2,O_ALLOC($fp)		# datos_sort.allocated=BUFFER_SIZE
 
 # Proceso la entrada	
-	addiu		a0,$fp,O_DATA		# a0=datos_sort
+	addi		a0,$fp,O_DATA		# a0=datos_sort
 #	jal		procesarEntrada		# Llamada a procesarEntrada
-	move		s0,v0			# codigoRetorno=v0
+	li		v0,0			# DEBUG: mientras esté comentado arriba
+	bnez		v0,alloc_error		# Saltar si hubo error
+
+# Ordeno
+	addi		t0,$fp,O_DATA		# t0=datos_sort
+	lw		a0,0(t0)		# a0=datos_sort.data
+	lw		a1,4(t0)		# a1=datos_sort.size
+#	jal		mergeSort		# Llamada a mergeSort
+	bnez		v0,alloc_error		# Saltar si hubo error
+
+# Imprimo la salida
+	addi		a0,$fp,O_DATA		# a0=datos_sort
+#	jal		imprimirSalida		# Llamada a imprimirSalida
+	li		v0,0			# DEBUG: mientras esté comentado arriba
+	bnez		v0,alloc_error		# Saltar si hubo error
+
+# Libero la memoria
+	addi		t0,$fp,O_DATA		# t0=datos_sort
+	lw		a0,0(t0)		# a0=datos_sort.data
+	jal		myfree			# Llamada a myfree
+#	li		v0,0			# DEBUG: mientras esté comentado arriba
+	bnez		v0,alloc_error		# Saltar si hubo error
 
 # Fin exitoso de la funcion
 fin_ok:
