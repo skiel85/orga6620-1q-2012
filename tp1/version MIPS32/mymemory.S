@@ -1,4 +1,78 @@
-	#include <mips/regdef.h>
+#include <mips/regdef.h>
+
+#void * mymemcpy (void * destination, const void * source, size_t num) {
+
+#	void * resultado = destination;
+
+#	while (num--) {
+#		*(char *)destination = *(char *)source;
+#		destination = (char *)destination + 1;
+#		source = (char *)source + 1;
+#	}
+
+#	return(resultado);
+#}
+
+#12.fp
+#8.gp
+#4.-
+#0.resultado
+
+.globl	mymemcpy
+.ent	mymemcpy
+
+mymemcpy:
+#	.frame		$fp,56,ra		# Definicion de stack frame
+	subu		sp,sp,16		# Creo el stack frame
+	.cprestore 8
+	sw		$fp,12(sp)		# Guardo fp
+	sw		gp,8(sp)		# Guardo gp
+	move		$fp,sp			# fp=sp
+
+# Guardo los argumentos que le pasan a la funcion
+	sw		a0,16($fp)		# Guardo el argumento 0 (*destination)
+	sw		a1,20($fp)		# Guardo el argumento 1 (*source)
+	sw		a3,24($fp)		# Guardo el argumento 2 (num)
+
+# Inicializo las variables locales
+	lw		t0,16($fp)
+	sw		t0,0($fp)
+
+# Hacemos la copia de la memoria
+	lw		t1,16($fp)
+	lw		t2,20($fp)
+	lw		t3,24($fp)
+	beqz		t3,retorno_resultado
+	li		t4,1
+while_mymemcpy:
+
+	lb		t5,0(t2)
+	sb		t5,0(t1)
+	
+	addiu		t1,1
+	sw		t1,16($fp)
+
+	addiu		t2,1
+	sw		t2,20($fp)
+
+	subu		t3,t3,t4
+	sw		t3,24($fp)
+	bnez		t3,while_mymemcpy
+
+# Guardo en v0 el retorno de la funcion, resultado
+retorno_resultado:
+	move		v0,t0			# v0=resultado
+
+# Fin de la funcion
+fin_mymemcpy:
+	move		sp,$fp			# sp=fp
+	lw		$fp,12(sp)		# Restauro fp
+	lw		gp,8(sp)		# Restauro gp
+	addu		sp,sp,16		# Elimino el stack frame
+	j		ra			# Retorno a funcion llamadora
+
+.end	mymemcpy
+
 
 	.text
 	.align	2
