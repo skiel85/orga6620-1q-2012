@@ -1,5 +1,5 @@
 #include <mips/regdef.h>
-#include "def_errores.h"
+#include "constantes.h"
 
 #define SSIZE			(48)
 
@@ -24,8 +24,6 @@
 /*			((SSIZE)-40) */
 /*			((SSIZE)-44) */
 /*			((SSIZE)-48) */
-
-#define BUFFER_SIZE 	2048
 
 .globl	main
 .ent	main

@@ -1,6 +1,7 @@
 #include <mips/regdef.h>
-#include "def_errores.h"
+#include "constantes.h"
 
+/* int mergeSort(char* list, unsigned long length) */
 .globl	mergeSort
 .ent	mergeSort
 

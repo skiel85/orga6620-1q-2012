@@ -19,13 +19,13 @@
 #define MAP_ANON 0x1000
 #endif
 
-#define MALLOC_SS			56
+#define MALLOC_SS		56
 
 #define MALLOC_O_ARG 		(MALLOC_SS)
 
 #define MALLOC_O_RA  		48
-#define MALLOC_O_FP			44
-#define MALLOC_O_GP			40
+#define MALLOC_O_FP		44
+#define MALLOC_O_GP		40
 
 #define MALLOC_LTA_SIZE		36	
 #define MALLOC_LTA_RVAL		32 
@@ -138,13 +138,13 @@ mymalloc_return:
 	.end	mymalloc
 
 
-#define FREE_SS				40
+#define FREE_SS			40
 
-#define FREE_O_ARG 			(FREE_SS)
+#define FREE_O_ARG 		(FREE_SS)
 
-#define FREE_O_RA  			32
-#define FREE_O_FP			28
-#define FREE_O_GP			24
+#define FREE_O_RA  		32
+#define FREE_O_FP		28
+#define FREE_O_GP		24
 
 #define FREE_LTA_ARG		20	 
 #define FREE_LTA_ACTUAL		16	 
@@ -154,9 +154,9 @@ mymalloc_return:
 myfree:
 	subu	sp, sp, FREE_SS		
 
-	sw		ra, FREE_O_RA(sp)			
-	sw		$fp,FREE_O_FP(sp)
-	sw		gp,FREE_O_GP(sp)						
+	sw	ra, FREE_O_RA(sp)			
+	sw	$fp,FREE_O_FP(sp)
+	sw	gp,FREE_O_GP(sp)						
 
 
 	sw	a0, FREE_O_ARG(sp)  # Temporary: argument pointer.			
@@ -212,9 +212,10 @@ myfree_return:
 	# Destroy the stack frame.
 	#
 	move	sp, $fp
-	lw		ra,  FREE_O_RA(sp)		
-	lw		$fp, FREE_O_FP(sp)	
+	lw	ra,  FREE_O_RA(sp)		
+	lw	$fp, FREE_O_FP(sp)	
 	addu	sp, sp,FREE_SS
 
 	j	ra
 	.end	myfree
+
