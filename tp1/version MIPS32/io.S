@@ -14,13 +14,14 @@
 #define 	O_ARG0		(SSIZE)
 #define 	O_ARG1		((SSIZE) + 4)
 #define 	O_ARG2		((SSIZE) + 8)
-#define 	O_ARG3		((SSIZE)	+ 12)
+#define 	O_ARG3		((SSIZE) + 12)
 
-	/* ssize_t	my_read(int,void*,size_t)	*/
+
+	/* ssize_t my_read(int,void*,size_t) */
 	.text
-	.align 	2
-	.globl	my_read
-	.ent		my_read
+	.align 2
+	.globl my_read
+	.ent my_read
 
 my_read:
    	.frame fp,32, ra
@@ -28,13 +29,13 @@ my_read:
    	.cpload  t9  
    	.set  reorder     
 	
-		subu	sp,sp,SSIZE
+		subu		sp,sp,SSIZE
 
 		sw		gp,O_GP(sp)
 		sw		fp,O_FP(sp)
 		sw		ra,O_RA(sp) 
 		
-		move	fp,sp
+		move		fp,sp
 
 		sw		a0,O_ARG0(fp)
 		sw		a1,O_ARG1(fp)
@@ -50,7 +51,7 @@ my_read:
 
 		syscall
 
-		bne	a3,zero,read_error
+		bne		a3,zero,read_error
 
 		b		read_unwind
 
@@ -61,17 +62,18 @@ read_unwind:
 		lw		gp,O_GP(sp)
 		lw		fp,O_FP(sp)
 		lw		ra,O_RA(sp)
-		addu	sp,sp,SSIZE
+		addu		sp,sp,SSIZE
 		
 		jr		ra
 
-		.end		my_read
+	.end		my_read
 
-		/* ssize_t	my_write(int,const void*,size_t)	*/
-		.text
-		.align 	2
-		.globl	my_write
-		.ent		my_write
+
+	/* ssize_t my_write(int,const void*,size_t) */
+	.text
+	.align 	2
+	.globl	my_write
+	.ent		my_write
 
 my_write:
    	.frame fp,32, ra
@@ -79,13 +81,13 @@ my_write:
    	.cpload  t9  
    	.set  reorder     
 
-		subu	sp,sp,SSIZE
+		subu		sp,sp,SSIZE
 
 		sw		gp,O_GP(sp)
 		sw		fp,O_FP(sp)
 		sw		ra,O_RA(sp) 
 		
-		move	fp,sp
+		move		fp,sp
 
 		sw		a0,O_ARG0(fp)
 		sw		a1,O_ARG1(fp)
@@ -99,7 +101,7 @@ my_write:
 
 		syscall
 
-		bne	a3,zero,write_error
+		bne		a3,zero,write_error
 
 		b		write_unwind
 
@@ -110,7 +112,9 @@ write_unwind:
 		lw		gp,O_GP(sp)
 		lw		fp,O_FP(sp)
 		lw		ra,O_RA(sp)
-		addu	sp,sp,SSIZE
+		addu		sp,sp,SSIZE
 		
 		jr		ra
-		.end		my_write
+
+	.end		my_write
+
