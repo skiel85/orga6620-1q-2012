@@ -1,8 +1,5 @@
 #include <mips/regdef.h>
 #include "def_errores.h"
-/*#include "manejoes.h"
-#include "mymalloc.h"
-#include "sort.h"*/
 
 #define SSIZE			(48)
 
@@ -40,11 +37,20 @@ msg0:		.asciiz		"tp1: syntax error, this program takes no arguments.\n"
 msg0len:	.word		52
 msg1:		.asciiz		"tp1: insufficient memory to start processing input.\n"
 msg1len:	.word		52
+msg2:		.asciiz		"tp1: error reading input.\n"
+msg2len:	.word		26
+msg3:		.asciiz		"tp1: internal error while sorting.\n"
+msg3len:	.word		35
+msg4:		.asciiz		"tp1: error printing output.\n"
+msg4len:	.word		28
+msg5:		.asciiz		"tp1: could not free memory.\n"
+msg5len:	.word		28
 nl:		.asciiz		"\n"
 
 # Programa principal
 
 .text
+.align	2
 main:
 	.frame		$fp,SSIZE,ra		# Definicion de stack frame
 	subu		sp,sp,SSIZE		# Creo el stack frame
@@ -63,17 +69,22 @@ main:
 	bnez		t0,syntax_error		# Imprimo error si hay argumentos
 
 # Inicializo variables locales
+	la		a1,msg0	
 	li		t0,0			# Valor inicial de varias variables
 	sw		t0,O_DATA($fp)		# datosSort.data
 	sw		t0,O_SIZE($fp)		# datosSort.size
 	sw		t0,O_ALLOC($fp)		# datosSort.allocated
 
 # Reservo memoria inicial para los datos de entrada
+	la		a1,msg0	
 	li		a0,BUFFER_SIZE		# Bytes a alocar
-	jal		mymalloc		# Llamada a mymalloc
+#	jal		mymalloc		# Llamada a mymalloc
+	la		t9,mymalloc
+	jalr		t9
 	beqz		v0,alloc_error		# Salto si no se aloco memoria
 
 # Inicializo datos de entrada
+	la		a1,msg0	
 	move		t0,v0
 	li		t1,0
 	li		t2,BUFFER_SIZE
@@ -83,29 +94,34 @@ main:
 
 # Proceso la entrada	
 	addi		a0,$fp,O_DATA		# a0=datos_sort
-#	jal		procesarEntrada		# Llamada a procesarEntrada
-	li		v0,0			# DEBUG: mientras esté comentado arriba
-	bnez		v0,alloc_error		# Saltar si hubo error
+#	jal		t0,procesarEntrada	# Llamada a procesarEntrada
+	la		t9,procesarEntrada
+	jalr		t9
+	bnez		v0,read_error		# Saltar si hubo error
 
 # Ordeno
 	addi		t0,$fp,O_DATA		# t0=datos_sort
 	lw		a0,0(t0)		# a0=datos_sort.data
 	lw		a1,4(t0)		# a1=datos_sort.size
 #	jal		mergeSort		# Llamada a mergeSort
-	bnez		v0,alloc_error		# Saltar si hubo error
+	la		t9,mergeSort
+	jalr		t9
+	bnez		v0,sort_error		# Saltar si hubo error
 
 # Imprimo la salida
 	addi		a0,$fp,O_DATA		# a0=datos_sort
 #	jal		imprimirSalida		# Llamada a imprimirSalida
-	li		v0,0			# DEBUG: mientras esté comentado arriba
-	bnez		v0,alloc_error		# Saltar si hubo error
+	la		t9,imprimirSalida
+	jalr		t9
+	bnez		v0,print_error		# Saltar si hubo error
 
 # Libero la memoria
 	addi		t0,$fp,O_DATA		# t0=datos_sort
 	lw		a0,0(t0)		# a0=datos_sort.data
-	jal		myfree			# Llamada a myfree
-#	li		v0,0			# DEBUG: mientras esté comentado arriba
-	bnez		v0,alloc_error		# Saltar si hubo error
+#	jal		myfree			# Llamada a myfree
+	la		t9,myfree
+	jalr		t9
+	bnez		v0,free_error		# Saltar si hubo error
 
 # Fin exitoso de la funcion
 fin_ok:
@@ -125,6 +141,38 @@ alloc_error:
 	li		a0,stderrfd		# a0=stream
 	la		a1,msg1			# a1=data
 	lw		a2,msg1len		# a1=size
+	jal		my_write		# Llamada a my_write
+	li		v0,2			# Establezco el codigo de error
+	j		fin_main		# Finalizo el programa
+
+read_error:
+	li		a0,stderrfd		# a0=stream
+	la		a1,msg2			# a1=data
+	lw		a2,msg2len		# a1=size
+	jal		my_write		# Llamada a my_write
+	li		v0,2			# Establezco el codigo de error
+	j		fin_main		# Finalizo el programa
+
+sort_error:
+	li		a0,stderrfd		# a0=stream
+	la		a1,msg3			# a1=data
+	lw		a2,msg3len		# a1=size
+	jal		my_write		# Llamada a my_write
+	li		v0,2			# Establezco el codigo de error
+	j		fin_main		# Finalizo el programa
+
+print_error:
+	li		a0,stderrfd		# a0=stream
+	la		a1,msg4			# a1=data
+	lw		a2,msg4len		# a1=size
+	jal		my_write		# Llamada a my_write
+	li		v0,2			# Establezco el codigo de error
+	j		fin_main		# Finalizo el programa
+
+free_error:
+	li		a0,stderrfd		# a0=stream
+	la		a1,msg5			# a1=data
+	lw		a2,msg5len		# a1=size
 	jal		my_write		# Llamada a my_write
 	li		v0,2			# Establezco el codigo de error
 	j		fin_main		# Finalizo el programa
