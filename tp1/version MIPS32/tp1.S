@@ -48,6 +48,8 @@ msg1:		.asciiz		"tp1: insufficient memory to start processing input.\n"
 msg1len:	.word		52
 msg2:		.asciiz		"tp1: insufficient memory to continue processing input.\n"
 msg2len:	.word		55
+msg3:		.asciiz		"tp1: unknown error.\n"
+msg3len:	.word		20
 
 # Programa principal
 .text
@@ -136,6 +138,10 @@ process_error:
 	li		a0,stderrfd		# a0=stream
 	beq		v0,ERROR_RESERVA_INICIAL_MEMORIA,process_error_mymalloc
 	beq		v0,ERROR_RESERVA_MEMORIA,process_error_myrealloc
+
+	la		a1,msg3			# a1=data
+	lw		a2,msg3len		# a1=size
+	b		process_error_write
 
 process_error_mymalloc:
 	la		a1,msg1			# a1=data
