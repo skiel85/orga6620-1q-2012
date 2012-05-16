@@ -1,28 +1,10 @@
 #include <mips/regdef.h>
 
-#void * mymemcpy (void * destination, const void * source, size_t num) {
-
-#	void * resultado = destination;
-
-#	while (num--) {
-#		*(char *)destination = *(char *)source;
-#		destination = (char *)destination + 1;
-#		source = (char *)source + 1;
-#	}
-
-#	return(resultado);
-#}
-
-#12.fp
-#8.gp
-#4.-
-#0.resultado
-
-.globl	mymemcpy
-.ent	mymemcpy
+.globl  mymemcpy
+.ent    mymemcpy
 
 mymemcpy:
-#	.frame		$fp,56,ra		# Definicion de stack frame
+	.frame		$fp,16,ra		# Definicion de stack frame
 	subu		sp,sp,16		# Creo el stack frame
 	.cprestore 8
 	sw		$fp,12(sp)		# Guardo fp
@@ -32,36 +14,38 @@ mymemcpy:
 # Guardo los argumentos que le pasan a la funcion
 	sw		a0,16($fp)		# Guardo el argumento 0 (*destination)
 	sw		a1,20($fp)		# Guardo el argumento 1 (*source)
-	sw		a3,24($fp)		# Guardo el argumento 2 (num)
+	sw		a2,24($fp)		# Guardo el argumento 2 (num)
 
 # Inicializo las variables locales
-	lw		t0,16($fp)
-	sw		t0,0($fp)
+	lw		t0,16($fp)		# Cargo el valor de resultado en v0
+	sw		t0,0($fp)		# void * resultado = destination
 
 # Hacemos la copia de la memoria
-	lw		t1,16($fp)
-	lw		t2,20($fp)
-	lw		t3,24($fp)
-	beqz		t3,retorno_resultado
-	li		t4,1
-while_mymemcpy:
-
-	lb		t5,0(t2)
-	sb		t5,0(t1)
-	
-	addiu		t1,1
-	sw		t1,16($fp)
-
-	addiu		t2,1
-	sw		t2,20($fp)
-
-	subu		t3,t3,t4
-	sw		t3,24($fp)
-	bnez		t3,while_mymemcpy
+	lw		t0,24($fp)		# Cargo en t0 el valor de num
+while_mymemcpy_cond:
+	addu		t0,t0,-1		# t0--
+	sw		t0,24($fp)		# num--
+	li		t1,-1			# t3=-1
+	bne		t0,t1,while_mymemcpy_body  # while (num--) si t1 no es igual a -1, entramos al bucle
+	b		mymemcpy_retorno_resultado # Si num=t1=-1 salimos del bucle
+while_mymemcpy_body:
+	lw		t1,16($fp)		# Cargo destination en t1
+	lw		t2,20($fp)		# Cargo source en t2
+	lb		t2,0(t2)		# Obtengo *(char *)source		
+	sb		t2,0(t1)		# *(char *)destination = *(char *)source
+		
+	lw		t1,16($fp)		# Cargo destination en t1
+	addu		t1,t1,1			# t1++
+	sw		t1,16($fp)		# destination = (char *)destination + 1
+		
+	lw		t2,20($fp)		# Cargo source en t2
+	addu		t2,t2,1			# t2++		
+	sw		t2,20($fp)		# source = (char *)source + 1
+	b		while_mymemcpy_cond	# Finalizado el body del while vuelvo a evaluar la condicion	
 
 # Guardo en v0 el retorno de la funcion, resultado
-retorno_resultado:
-	move		v0,t0			# v0=resultado
+mymemcpy_retorno_resultado:
+	lw		v0,0($fp)		# v0=resultado
 
 # Fin de la funcion
 fin_mymemcpy:
