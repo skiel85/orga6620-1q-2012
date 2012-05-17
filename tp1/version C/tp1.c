@@ -11,7 +11,7 @@
  * 83062 - Arguello, Osiris (osirisarguello@yahoo.com.ar)
  * 84474 - Paez, Ezequiel (skiel85@gmail.com)
  *
- * Fecha de entrega: 03/05/2012
+ * Fecha de entrega: 17/05/2012
  */
 
 #include <stdio.h>
@@ -26,9 +26,15 @@ int main(int argc, char** argv){
 	
 	tDynArray datos_sort;
 	int codigo_retorno=0;
+
+	/* Validacion de la sintaxis de llamada al programa */
+	if (argc>1) {
+		fprintf(stderr,"tp1: syntax error, this program takes no arguments.\n");
+		return (EXIT_FAILURE);
+	}
 			
 	/* Inicializacion de la estructura utilizada para guardar los datos de entrada */
-	datos_sort.data=calloc(BUFFER_SIZE, sizeof(char));
+	datos_sort.data=(char*)malloc(BUFFER_SIZE*sizeof(char));
 	if (datos_sort.data == NULL) {
 		datos_sort.allocated=0;
 		codigo_retorno=ERROR_RESERVA_INICIAL_MEMORIA;
@@ -65,13 +71,13 @@ int main(int argc, char** argv){
 			return EXIT_SUCCESS;
 			break;
 		case ERROR_RESERVA_INICIAL_MEMORIA:
-			fprintf(stderr, "tp0: insufficient memory to start processing input.\n");
+			fprintf(stderr, "tp1: insufficient memory to start processing input.\n");
 			break;       
 		case ERROR_RESERVA_MEMORIA:
-			fprintf(stderr, "tp0: insufficient memory to continue processing input.\n");
+			fprintf(stderr, "tp1: insufficient memory to continue processing input.\n");
 			break;
      		default:
-			fprintf(stderr, "tp0: unknown error.\n");
+			fprintf(stderr, "tp1: unknown error.\n");
 			abort();
     }
 
