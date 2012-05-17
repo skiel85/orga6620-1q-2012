@@ -5,7 +5,6 @@
 	
 		#define ERROR_RESERVA_INICIAL_MEMORIA	2
 		#define ERROR_RESERVA_MEMORIA			3
-		#define ERROR_ARCHIVO_ENTRADA			4
 		
 #endif
 
